@@ -10,7 +10,7 @@ import random, pygame, sys
 from pygame.locals import *
 
 FPS = 15
-WINDOWHEIGHT = 800
+WINDOWHEIGHT = 900
 WINDOWWIDTH = 600
 CELLSIZE = 30
 assert WINDOWWIDTH % CELLSIZE == 0, "Window height must be a multiple of cell size"
@@ -55,7 +55,7 @@ def runGame():
 	#Set random start point
 	startx = random.randint(5,CELLWIDTH - 6)
 	starty = random.randint(5,CELLWIDTH - 6)
-	womrCoords = [{'x':startx, 'y':starty},
+	wormCoords = [{'x':startx, 'y':starty},
 		      {'x':startx - 1, 'y': starty},
 		      {'x':startx - 2, 'y':starty}]
 	direction = RIGHT
@@ -67,22 +67,22 @@ def runGame():
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				terminate()
-			elif event.type = KEYDOWN:
+			elif event.type == KEYDOWN:
 				if(event.key == K_LEFT or event.key == K_a) and direction != RIGHT:
 					direction = LEFT
 				elif (event.key == K_RIGHT or event.key == K_d) and direction != LEFT:
 					direction = RIGHT
 				elif(event.key == K_UP or event.key == K_w) and direction != DOWN:
 					direction = UP
-				elif(event.key == K_DOWN or event.key = K_s) and direction != UP:
+				elif(event.key == K_DOWN or event.key == K_s) and direction != UP:
 					direction = DOWN
 				elif event.key == K_ESCAPE:
 					terminate()
 		
-		# heck if worm hit itself or and edge
+		# Check if worm hit itself or and edge
 		if wormCoords[HEAD]['x'] == -1 or wormCoords[HEAD]['x'] == CELLWIDTH or wormCoords[HEAD]['y'] == -1 or wormCoords[HEAD]['y'] == CELLHEIGHT:
 			return #game over
-		for wormBody in wormCoords[1]:
+		for wormBody in wormCoords[1:]:
 			if wormBody['x'] == wormCoords[HEAD]['x'] and wormBody['y'] == wormCoords[HEAD]['y']:
 				return #game over
 		# Check if worm ate food
@@ -94,7 +94,7 @@ def runGame():
 		
 		# move worm
 		if direction == UP:
-			newHead = {'x':wormCoords[HEAD]['x'], 'y':wormCoords['y']-1}
+			newHead = {'x': wormCoords[HEAD]['x'], 'y': wormCoords[HEAD]['y'] - 1}
 		elif direction == DOWN:
 			newHead = {'x':wormCoords[HEAD]['x'],'y':wormCoords[HEAD]['y']+1}
 		elif direction == LEFT:
@@ -132,7 +132,7 @@ def checkForKeyPress():
 	return keyUpEvents[0].key
 
 #Start Screen
-def showShowStartScreen():
+def showStartScreen():
 	titleFont = pygame.font.Font('freesansbold.ttf',180)
 	titleSurf1 = titleFont.render('WORM!', True, WHITE, DARKGREEN)
 	titleSurf2 = titleFont.render('WORM!',True, GREEN)
@@ -142,27 +142,27 @@ def showShowStartScreen():
 	while True:
 		DISPLAYSURF.fill(BGCOLOR)
 
-	#Rotate start Screen	
-	rotatedSurf1 = pygame.transform.rotate(titleSurf1, degrees1)
-	rotatedRect1 = rotatedSurf1.get_rect()
-	rotatedRect1.center = (WINDOWWIDTH/2,WINDOWHEIGHT/2)
-	DISPLAYSURF.blit(rotatedSurf1, rotatedRect1)
-	
-	rotatedSurf2 = pygame.transform.rotate(titleSurf2, degrees2)
-	rotatedRect2 = rotatedSurf2.get_rect()
-	rotatedRect2.center = WINDOWWIDTH/2,WINDOWHEIGHT/2)
-	DISPLAYSURF.blit(rotatedSurf2, rotatedRect2)
+		#Rotate start Screen	
+		rotatedSurf1 = pygame.transform.rotate(titleSurf1, degrees1)
+		rotatedRect1 = rotatedSurf1.get_rect()
+		rotatedRect1.center = (WINDOWWIDTH/2,WINDOWHEIGHT/2)
+		DISPLAYSURF.blit(rotatedSurf1, rotatedRect1)
+		
+		rotatedSurf2 = pygame.transform.rotate(titleSurf2, degrees2)
+		rotatedRect2 = rotatedSurf2.get_rect()
+		rotatedRect2.center = (WINDOWWIDTH/2,WINDOWHEIGHT/2)
+		DISPLAYSURF.blit(rotatedSurf2, rotatedRect2)
 
-	drawPressKeyMsg()
+		drawPressKeyMsg()
 
-	if checkForKeyPress():
-		pygame.event.get()
-		return
-	pygame.display.update() #clear event queue
-	FPSCLOCK.tick(FPS)
+		if checkForKeyPress():
+			pygame.event.get()
+			return
+		pygame.display.update() #clear event queue
+		FPSCLOCK.tick(FPS)
 
-	degrees1 +=3
-	degrees2 +=7
+		degrees1 +=3
+		degrees2 +=7
 
 #terminate function
 def terminate():
@@ -171,11 +171,11 @@ def terminate():
 
 #Where food appears
 def getRandomLocation():
-	retrun {'x':random.randint(0, CELLWIDTH -1), 'y':random.randint(0, CELLHEIGHT-1)}
+	return {'x':random.randint(0, CELLWIDTH -1), 'y':random.randint(0, CELLHEIGHT-1)}
 
 #Game over screens
 def showGameOverScreen():
-	gameOverFont = pygame.font.Font('freesansbold.tff', 180)
+	gameOverFont = pygame.font.Font('freesansbold.ttf', 180)
 	gameSurf = gameOverFont.render('GAME', True, WHITE)
 	overSurf = gameOverFont.render('OVER', True, WHITE)
 	gameRect = gameSurf.get_rect()
@@ -195,3 +195,38 @@ def showGameOverScreen():
 		if checkForKeyPress():
 			pygame.event.get()
 			return
+
+#Draw Score
+def drawScore(score):
+	scoreSurf = BASICFONT.render('Score: %s' % (score), True, WHITE)
+	scoreRect = scoreSurf.get_rect()
+	scoreRect.topleft = (WINDOWWIDTH - 120, 10)
+	DISPLAYSURF.blit(scoreSurf,scoreRect)
+
+#Draw Worm
+def drawWorm(wormCoords):
+	for coord in (wormCoords):
+		x = coord['x']*CELLSIZE
+		y = coord['y']*CELLSIZE
+		wormSegmentRect = pygame.Rect(x,y,CELLSIZE,CELLSIZE)
+		pygame.draw.rect(DISPLAYSURF, DARKGREEN, wormSegmentRect)
+		wormInnerSegmentRect = pygame.Rect(x + 4, y + 4, CELLSIZE - 8, CELLSIZE - 8)
+		pygame.draw.rect(DISPLAYSURF, GREEN, wormInnerSegmentRect)
+
+#Draw Food
+def drawFood(coord):
+	x = coord['x']*CELLSIZE
+	y = coord['y']*CELLSIZE
+	foodRect = pygame.Rect(x,y,CELLSIZE,CELLSIZE)
+	pygame.draw.rect(DISPLAYSURF, RED, foodRect)
+
+#Draw grid
+def drawGrid():
+	for x in range(0, WINDOWWIDTH, CELLSIZE):
+		pygame.draw.line(DISPLAYSURF, DARKGRAY,(x,0),(x,WINDOWHEIGHT))
+	for y in range(0, WINDOWHEIGHT, CELLSIZE):
+		pygame.draw.line(DISPLAYSURF, DARKGRAY, (0,y),(WINDOWWIDTH,y))
+
+#main
+if __name__ == '__main__':
+	main()
