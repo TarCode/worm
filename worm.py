@@ -111,3 +111,87 @@ def runGame():
 		drawScore(len(wormCoords) - 3)
 		pygame.display.update()
 		FPSCLOCK.tick(FPS)
+
+# Draw "Press a Key" to screen
+def drawPressKeyMsg():
+	pressKeySurf = BASICFONT.render('PRESS A KEY TO PLAY', True, DARKGRAY)
+	pressKeyRect = pressKeySurf.get_rect()
+	pressKeyRect.topleft = (WINDOWWIDTH - 300, WINDOWHEIGHT - 50)
+	DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+#Check for key press function
+def checkForKeyPress():
+	if len(pygame.event.get(QUIT))>0:
+		terminate()
+	
+	keyUpEvents = pygame.event.get(KEYUP)
+	if len(keyUpEvents) == 0:
+		return None
+	if keyUpEvents[00].key == K_ESCAPE:
+		terminate()
+	return keyUpEvents[0].key
+
+#Start Screen
+def showShowStartScreen():
+	titleFont = pygame.font.Font('freesansbold.ttf',180)
+	titleSurf1 = titleFont.render('WORM!', True, WHITE, DARKGREEN)
+	titleSurf2 = titleFont.render('WORM!',True, GREEN)
+	
+	degrees1 = 0
+	degrees2 = 0
+	while True:
+		DISPLAYSURF.fill(BGCOLOR)
+
+	#Rotate start Screen	
+	rotatedSurf1 = pygame.transform.rotate(titleSurf1, degrees1)
+	rotatedRect1 = rotatedSurf1.get_rect()
+	rotatedRect1.center = (WINDOWWIDTH/2,WINDOWHEIGHT/2)
+	DISPLAYSURF.blit(rotatedSurf1, rotatedRect1)
+	
+	rotatedSurf2 = pygame.transform.rotate(titleSurf2, degrees2)
+	rotatedRect2 = rotatedSurf2.get_rect()
+	rotatedRect2.center = WINDOWWIDTH/2,WINDOWHEIGHT/2)
+	DISPLAYSURF.blit(rotatedSurf2, rotatedRect2)
+
+	drawPressKeyMsg()
+
+	if checkForKeyPress():
+		pygame.event.get()
+		return
+	pygame.display.update() #clear event queue
+	FPSCLOCK.tick(FPS)
+
+	degrees1 +=3
+	degrees2 +=7
+
+#terminate function
+def terminate():
+	pygame.quit()
+	sys.exit()
+
+#Where food appears
+def getRandomLocation():
+	retrun {'x':random.randint(0, CELLWIDTH -1), 'y':random.randint(0, CELLHEIGHT-1)}
+
+#Game over screens
+def showGameOverScreen():
+	gameOverFont = pygame.font.Font('freesansbold.tff', 180)
+	gameSurf = gameOverFont.render('GAME', True, WHITE)
+	overSurf = gameOverFont.render('OVER', True, WHITE)
+	gameRect = gameSurf.get_rect()
+	overRect = overSurf.get_rect()
+	gameRect.midtop = (WINDOWWIDTH/2,10)
+	overRect.midtop = (WINDOWWIDTH/2,gameRect.height+10+25)
+
+	DISPLAYSURF.blit(gameSurf, gameRect)
+	DISPLAYSURF.blit(overSurf, overRect)
+	drawPressKeyMsg()
+	pygame.display.update()
+	
+	pygame.time.wait(500)
+	checkForKeyPress()
+	
+	while True:
+		if checkForKeyPress():
+			pygame.event.get()
+			return
