@@ -10,8 +10,8 @@ import random, pygame, sys
 from pygame.locals import *
 
 FPS = 15
-WINDOWHEIGHT = 900
-WINDOWWIDTH = 600
+WINDOWHEIGHT = 600
+WINDOWWIDTH = 1200
 CELLSIZE = 30
 assert WINDOWWIDTH % CELLSIZE == 0, "Window height must be a multiple of cell size"
 assert WINDOWHEIGHT % CELLSIZE == 0, "Window width must be a multiple of cell size"
@@ -19,12 +19,12 @@ CELLWIDTH = int(WINDOWWIDTH/CELLSIZE)
 CELLHEIGHT = int(WINDOWHEIGHT/CELLSIZE)
 
 #	      R    G    B
-WHITE 	  = (230, 230, 230)
-BLACK 	  = ( 10,  10,  20)
-RED   	  = (230,   0,   0)
-GREEN 	  = (  0, 230,   0)
-DARKGREEN = (  0, 130,   0)
-DARKGRAY  = ( 30,  30,  30)
+WHITE 	  = (190, 190, 190)
+BLACK 	  = ( 10,  10,  15)
+RED   	  = (190,   0,   0)
+GREEN 	  = (  0, 190,   0)
+DARKGREEN = (  0, 100,   0)
+DARKGRAY  = ( 50,  50,  50)
 
 BGCOLOR = BLACK
 
@@ -127,7 +127,7 @@ def checkForKeyPress():
 	keyUpEvents = pygame.event.get(KEYUP)
 	if len(keyUpEvents) == 0:
 		return None
-	if keyUpEvents[00].key == K_ESCAPE:
+	if keyUpEvents[0].key == K_ESCAPE:
 		terminate()
 	return keyUpEvents[0].key
 
